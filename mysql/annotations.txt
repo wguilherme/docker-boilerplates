@@ -1,0 +1,18 @@
+
+
+run detached
+docker run --name mysql-udemy -e MYSQL_ROOT_PASSWORD=12345678 -d mysql  
+
+enter in mysql command line from container
+docker exec -it mysql bash -l
+
+docker exec -it mysql-udemy bash -l
+
+access
+-> mysql -u root -p
+-> password
+
+SELECT USER(),CURRENT_USER();
+
+CREATE USER admin@localhost IDENTIFIED BY '12345678';
+grant all privileges on *.* to admin@localhost with grant option;
