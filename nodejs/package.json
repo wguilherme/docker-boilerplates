@@ -1,0 +1,23 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^3.0.1",
+    "jest": "^28.1.1",
+    "mongodb-memory-server": "^8.6.0",
+    "supertest": "^6.2.3"
+  },
+  "dependencies": {
+    "mongoose": "^6.3.6",
+    "node-notifier": "^10.0.1"
+  }
+}

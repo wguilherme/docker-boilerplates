@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  dockerguide-nodejs:
+    build: .
+    container_name: dockerguide-nodejs
+    ports:
+      - "4003:4003"
+    volumes:
+      - .:/usr/app
