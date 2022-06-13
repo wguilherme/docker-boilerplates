@@ -11,4 +11,3 @@ COPY . .
 EXPOSE 4003
 
 ENTRYPOINT [ "npm", "test" ]
-
