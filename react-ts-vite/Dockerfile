@@ -1,4 +1,3 @@
-# COPY ["package.json", "package-lock.json", "./"]
 FROM node:16
 
 WORKDIR /usr/react-vite-ts
@@ -6,9 +5,10 @@ WORKDIR /usr/react-vite-ts
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-ADD . .
-
+COPY ["package.json", "package-lock.json", "./"]
 RUN npm install
+
+ADD . .
 
 ENTRYPOINT ["/entrypoint.sh"]
 
