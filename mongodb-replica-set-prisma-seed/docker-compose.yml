@@ -12,10 +12,10 @@ services:
     ports:
       - '27017:27017'
 
-  # mongodb_migrate_seed:
-  #   build: ./mongodb_migrate_seed
-  #   depends_on:
-  #     - mongodb_migrate
+  mongodb_migrate_seed:
+    build: ./mongodb_migrate_seed
+    depends_on:
+      - mongodb_migrate
 
   # Replica Set (required for Prisma Client)
   mongo:
