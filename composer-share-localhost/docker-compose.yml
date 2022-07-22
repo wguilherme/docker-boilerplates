@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  service1:
+    build: ./service1
+    container_name: service1
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./service1:/usr/app/service1
+    networks:
+      - overlay
+  service2:
+    build: ./service2
+    container_name: service2
+    ports:
+      - "4050:4050"
+    volumes:
+      - ./service2:/usr/app/service2
+    networks:
+      - overlay
+  # redis:
+  #   image: redis/redis-stack-server:latest
+  #   container_name: redis-solida
+  #   ports:
+  #     - '6200:6379'
+  #   networks:
+  #     - overlay
+
+networks:
+  overlay:
