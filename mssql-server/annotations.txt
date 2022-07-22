@@ -1,0 +1,78 @@
+sudo docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=Password12!' \
+   --name 'sql1' -p 1401:1433 \
+   -v sql1data:/var/opt/mssql \
+   -d mcr.microsoft.com/mssql/server:2019-latest
+
+
+
+// para alterar a senha do SA
+
+sudo docker exec -it sql1 /opt/mssql-tools/bin/sqlcmd \
+   -S localhost -U SA -P 'Password12!' \
+   -Q 'ALTER LOGIN SA WITH PASSWORD="Password12@Updat3d"'
+
+
+// criar a pasta de backup
+sudo docker exec -it sql1 mkdir /var/opt/mssql/backup
+
+// baixar / copiar dump/backup pra pasta
+curl -L -o wwi2.bak 'https://github.com/Microsoft/sql-server-samples/releases/download/wide-world-importers-v1.0/WideWorldImporters-Full.bak'
+
+// copiar arquivo para o container
+sudo docker cp wwi.bak sql1:/var/opt/mssql/backup
+
+
+// restaurar/importar banco de dados usando a ferramenta sqlcmd que já vem pré-instalada no mssql-server
+
+sudo docker exec -it sql1 /opt/mssql-tools/bin/sqlcmd -S localhost \
+   -U SA -P 'Password12@Updat3d' \
+   -Q 'RESTORE FILELISTONLY FROM DISK = "/var/opt/mssql/backup/wwi.bak"' \
+   | tr -s ' ' | cut -d ' ' -f 1-2
+
+ // chamar o comando restore database para restaurar o banco de dados dentro do contêiner
+
+ sudo docker exec -it sql1 /opt/mssql-tools/bin/sqlcmd \
+   -S localhost -U SA -P 'Password12@Updat3d' \
+   -Q 'RESTORE DATABASE WideWorldImporters FROM DISK = "/var/opt/mssql/backup/wwi.bak" WITH MOVE "WWI_Primary" TO "/var/opt/mssql/data/WideWorldImporters.mdf", MOVE "WWI_UserData" TO "/var/opt/mssql/data/WideWorldImporters_userdata.ndf", MOVE "WWI_Log" TO "/var/opt/mssql/data/WideWorldImporters.ldf", MOVE "WWI_InMemory_Data_1" TO "/var/opt/mssql/data/WideWorldImporters_InMemory_Data_1"'
+
+
+// verificar banco de dados restaurado
+// esse comando retorna uma lista de nomes de bancos de dados do container
+
+sudo docker exec -it sql1 /opt/mssql-tools/bin/sqlcmd \
+   -S localhost -U SA -P 'Password12@Updat3d' \
+   -Q 'SELECT Name FROM sys.Databases'
+
+
+// fazer alteração via command line
+// Execute uma consulta para exibir os 10 principais itens na tabela Warehouse.StockItems
+
+sudo docker exec -it sql1 /opt/mssql-tools/bin/sqlcmd \
+   -S localhost -U SA -P 'Password12@Updat3d' \
+   -Q 'SELECT TOP 10 StockItemID, StockItemName FROM WideWorldImporters.Warehouse.StockItems ORDER BY StockItemID'
+
+
+// Atualize a descrição do primeiro item com a seguinte instrução UPDATE:
+
+sudo docker exec -it sql1 /opt/mssql-tools/bin/sqlcmd \
+   -S localhost -U SA -P 'Password12@Updat3d' \
+   -Q 'UPDATE WideWorldImporters.Warehouse.StockItems SET StockItemName="USB missile launcher (Dark Green)" WHERE StockItemID=1; SELECT StockItemID, StockItemName FROM WideWorldImporters.Warehouse.StockItems WHERE StockItemID=1'
+
+
+// Criar um novo backup
+Use o comando do Transact-SQL BACKUP DATABASE para criar um backup de banco de dados no contêiner. Este tutorial cria um novo arquivo de backup, wwi_2.bak, no diretório /var/opt/MSSQL/backup criado anteriormente.
+
+sudo docker exec -it sql1 /opt/mssql-tools/bin/sqlcmd \
+   -S localhost -U SA -P 'Password12@Updat3d' \
+   -Q "BACKUP DATABASE [WideWorldImporters] TO DISK = N'/var/opt/mssql/backup/wwi_2.bak' WITH NOFORMAT, NOINIT, NAME = 'WideWorldImporters-full', SKIP, NOREWIND, NOUNLOAD, STATS = 10"
+
+
+
+
+Referências:
+https://docs.microsoft.com/pt-br/sql/linux/tutorial-restore-backup-in-sql-server-container?view=sql-server-ver16
+https://medium.com/agilix/docker-express-running-a-local-sql-server-express-204890cff699
+https://medium.com/geekculture/docker-express-running-a-local-sql-server-on-your-m1-mac-8bbc22c49dc9
+https://renatogroffe.medium.com/net-sql-server-2017-parte-1-executando-o-sql-server-em-um-container-docker-83abbed8eb7e
+https://macoratti.net/19/01/dock_mssql1.htm
+https://github.com/microsoft/mssql-docker
