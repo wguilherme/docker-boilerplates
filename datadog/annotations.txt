@@ -1,0 +1,9 @@
+docker run -d --name dd-agent -v /var/run/docker.sock:/var/run/docker.sock:ro -v /proc/:/host/proc/:ro -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro -e DD_API_KEY=9aed761eac2215657fc10d462e798884 -e DD_SITE="datadoghq.eu" gcr.io/datadoghq/agent:7
+
+
+By default dogstatsd will only listening to localhost, you need to add -e DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true option to the container's parameters to listen to dogstatsd packets from other containers (required to send custom metrics). Then bind the container's statsd port to the hosts's IP by adding the -p 8125:8125/udp option to the container's parameters. Then, configure your client library to send UDP packets to the hosts's 
+
+
+Note: You must not run more than one Datadog Agent per node. Running multiple Agents may result in unexpected behavior.
+
+Note: For some features provided by system-probe, including network monitoring, security agent, and oom_kill check, you must also mount the /etc/os-release file with -v /etc/os-release:/host/etc/os-release:ro. If your Linux distribution does not include an /etc/os-release file, mount the equivalent one provided, for example /etc/redhat-release or /etc/fedora-release.
