@@ -1,15 +1,13 @@
-mssqldata:
-  image: mcr.microsoft.com/mssql/server:2019-latest
-  environment:
-    - SA_PASSWORD=Agenzia2022Pass
-    - ACCEPT_EULA=Y
-  ports:
-    - "1433:1433"
-  volumes:
-    - ./mssqlagenzia:/var/opt/mssql
-  # create backup folder
-  expose:
-    - "1433"
-  # command:
-  #   - mkdir -p /var/opt/mssql/backup
-  #   - cp backup.bak /var/opt/mssql/backup/backup.bak
+services:
+  mssqldata:
+    build: .
+    container_name: mssqldata
+    environment:
+      - SA_PASSWORD=Agenzia2022Pass
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./mssqlagenzia:/var/opt/mssql/data
+    expose:
+      - "1433"
