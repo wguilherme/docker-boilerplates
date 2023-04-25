@@ -7,7 +7,7 @@ services:
       - ACCEPT_EULA=Y
     ports:
       - "1433:1433"
-    volumes:
-      - ./mssqlagenzia:/var/opt/mssql/data
+    # volumes:
+    #   - ./mssqlagenzia:/var/opt/mssql/data
     expose:
       - "1433"

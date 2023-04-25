@@ -4,6 +4,12 @@ FROM mcr.microsoft.com/mssql/server:2019-latest
 # Create a directory for copy backup.bak file
 RUN mkdir /usr/backup
 
+# Ensure permissions in the directory
+# Create a directory for SQL Server data and set permissions
+RUN mkdir -p /var/opt/mssql/data && \
+    chown -R mssql:mssql /var/opt/mssql
+
+
 # Copy backup.bak file to container
 COPY ./backup.bak /usr/backup
 
